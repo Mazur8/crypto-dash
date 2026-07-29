@@ -9,6 +9,16 @@ function App() {
   const [searchTerm, setSearchTerm]=useState("");
   const [timeFilter, setTimeFilter]=useState("24h");
   const [currency, setCurrency]=useState("usd");
+  const [favoritesCrypto, setFavoritesCrypto]=useState(() => {
+    try{
+      const data = localStorage.getItem("cryptoFavorites");
+      return data ? JSON.parse(data) : [];
+    } catch (error){
+      console.warn("Brak dostępu do localStorage:", error);
+      return [];
+    }
+  });
+  const [showFavoritesOnly, setShowFavouritesOnly]=useState(false);
 
   useEffect(()=>{
     const apiKey = import.meta.env.VITE_COINGECKO_API_KEY;
@@ -31,6 +41,23 @@ function App() {
     return () => clearInterval(intervalId)
   }, [currency]);
 
+  useEffect(()=>{
+    try{
+      const data = JSON.stringify(favoritesCrypto);
+      localStorage.setItem("cryptoFavorites", data);
+    }catch(error){
+      console.warn("Nie udało się zapisać do localStorage:", error)
+    }
+  }, [favoritesCrypto]);
+
+  const toggleFavorite = (id) => {
+    if(favoritesCrypto.includes(id)){
+      setFavoritesCrypto(favoritesCrypto.filter(favID => favID !==id));
+    } else {
+      setFavoritesCrypto([...favoritesCrypto, id]);
+    }
+  }
+
   const filteredCrypto = cryptoList.filter(crypto => 
     crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase())
@@ -44,7 +71,11 @@ function App() {
     return value !== undefined && value !==null ? value : 0;
   } 
 
-  const displayedCrypto = searchTerm === "" ? filteredCrypto.slice(0,5) : filteredCrypto;
+  const baseCrypto = showFavoritesOnly
+    ? filteredCrypto.filter(crypto => favoritesCrypto.includes(crypto.id))
+    : filteredCrypto; 
+
+  const displayedCrypto = searchTerm === "" ? baseCrypto.slice(0,5) : baseCrypto;
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -91,6 +122,18 @@ function App() {
           </button>
         ))}
       </div>
+      <div className="flex justify-center pb-6">
+        <button
+          onClick={()=> setShowFavouritesOnly(!showFavoritesOnly)}
+          className={`px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${
+            showFavoritesOnly 
+            ? 'bg-amber-500 text-white font-bold' 
+            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
+        >
+          {showFavoritesOnly ? '★ Pokaż wszystkie' : '★ Tylko ulubione'}
+        </button>
+      </div>
 
       {error ? (
         <p className="text-center text-red-500 font-bold">Wystąpił błąd</p>
@@ -109,6 +152,8 @@ function App() {
                 symbol={crypto.symbol}
                 priceChange={getPriceChange(crypto)}
                 currency={currency}
+                isFavorite={favoritesCrypto.includes(crypto.id)}
+                onToggleFavorite={() => toggleFavorite(crypto.id)}
               />
             ))
           )}

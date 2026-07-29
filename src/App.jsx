@@ -9,6 +9,7 @@ function App() {
   const [timeFilter, setTimeFilter] = useState("24h");
   const [currency, setCurrency] = useState("usd");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [itemLimit, setItemLimit] = useState(5);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -74,7 +75,8 @@ function App() {
       value = crypto.price_change_percentage_7d_in_currency;
     if (timeFilter === "30 dni")
       value = crypto.price_change_percentage_30d_in_currency;
-    if (timeFilter === "1 rok") value = crypto.price_change_percentage_1y;
+    if (timeFilter === "1 rok") 
+      value = crypto.price_change_percentage_1y;
     return value !== undefined && value !== null ? value : 0;
   };
 
@@ -83,7 +85,7 @@ function App() {
     : filteredCrypto;
 
   const displayedCrypto =
-    searchTerm === "" ? baseCrypto.slice(0, 5) : baseCrypto;
+    searchTerm === "" && !showFavoritesOnly ? baseCrypto.slice(0, itemLimit) : baseCrypto;
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 relative">
@@ -120,6 +122,21 @@ function App() {
           >
             ✕
           </button>
+        </div>
+
+        <div>
+          <div className="flex justify-center pb-6">
+            <button
+              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${
+                showFavoritesOnly
+                  ? "bg-amber-500 text-white font-bold"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              {showFavoritesOnly ? "★ Pokaż wszystkie" : "★ Tylko ulubione"}
+            </button>
+          </div>
         </div>
 
         <div>
@@ -164,20 +181,28 @@ function App() {
           </div>
         </div>
 
+
         <div>
-          <div className="flex justify-center pb-6">
-            <button
-              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${
-                showFavoritesOnly
-                  ? "bg-amber-500 text-white font-bold"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              {showFavoritesOnly ? "★ Pokaż wszystkie" : "★ Tylko ulubione"}
-            </button>
+          <p className="text-center pb-2 text-lg font-medium text-gray-700">
+            Liczba kryptowalut: <span className="font-bold text-indigo-600">{itemLimit}</span>
+          </p>
+          <div className="flex flex-col items-center px-4">
+            <input
+              type="range"
+              min="1"
+              max="50"
+              value={itemLimit}
+              onChange={(e) => setItemLimit(Number(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+            />
+            <div className="flex justify-between w-full text-xs text-gray-500 mt-1">
+              <span>1</span>
+              <span>25</span>
+              <span>50</span>
+            </div>
           </div>
         </div>
+      
       </div>
 
       <div className="max-w-md mx-auto mb-8">

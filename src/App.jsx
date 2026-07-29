@@ -8,11 +8,12 @@ function App() {
   const [error, setError]=useState(false);
   const [searchTerm, setSearchTerm]=useState("");
   const [timeFilter, setTimeFilter]=useState("24h");
+  const [currency, setCurrency]=useState("usd");
 
   useEffect(()=>{
     const apiKey = import.meta.env.VITE_COINGECKO_API_KEY;
     const fetchData = () => {
-      fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&price_change_percentage=7d,30d,1y&x_cg_demo_api_key=${apiKey}`)
+      fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=50&page=1&price_change_percentage=7d,30d,1y&x_cg_demo_api_key=${apiKey}`)
       .then(res => {
         if(!res.ok){
           throw new Error('Błąd pobierania danych')
@@ -28,7 +29,7 @@ function App() {
     const intervalId = setInterval(fetchData, 10000);
 
     return () => clearInterval(intervalId)
-  }, []);
+  }, [currency]);
 
   const filteredCrypto = cryptoList.filter(crypto => 
     crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,6 +59,7 @@ function App() {
         />
       </div>
 
+      <p className="text-center pb-3 text-2xl font-medium">Okres cen kryptowalut</p>
       <div className="flex gap-2 justify-center pb-6">
         {["24h", "7 dni", "30 dni", "1 rok"].map((s) => (
           <button
@@ -70,6 +72,22 @@ function App() {
             }`}
           >
             {s}
+          </button>
+        ))}
+      </div>
+      <p className="text-center pb-3 text-2xl font-medium">Wybierz walute</p>
+      <div className="flex gap-2 justify-center pb-6">
+        {["usd", "pln", "eur"].map((curr) => (
+          <button
+            key={curr}
+            onClick={() => setCurrency(curr)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              currency===curr
+              ? 'bg-indigo-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer'
+            }`}  
+          >
+            {curr}
           </button>
         ))}
       </div>
@@ -90,6 +108,7 @@ function App() {
                 price={crypto.current_price}
                 symbol={crypto.symbol}
                 priceChange={getPriceChange(crypto)}
+                currency={currency}
               />
             ))
           )}

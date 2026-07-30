@@ -10,6 +10,7 @@ function App() {
   const [currency, setCurrency] = useState("usd");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [itemLimit, setItemLimit] = useState(5);
+  const [sortBy, setSortBy] = useState("Brak");
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -63,11 +64,20 @@ function App() {
     }
   };
 
-  const filteredCrypto = cryptoList.filter(
+  const sortedCrypto = [...cryptoList].sort((a,b) =>{
+    if(sortBy === "Cena rosnąco") return a.current_price - b.current_price
+    if(sortBy === "Cena malejąco") return b.current_price - a.current_price
+    if(sortBy === "Nazwa rosnąco") return a.name.localeCompare(b.name);
+    if(sortBy === "Nazwa malejąco") return b.name.localeCompare(a.name);
+    return 0;
+  });
+
+  const filteredCrypto = sortedCrypto.filter(
     (crypto) =>
       crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
 
   const getPriceChange = (crypto) => {
     let value = crypto.price_change_percentage_24h;
@@ -136,6 +146,27 @@ function App() {
             >
               {showFavoritesOnly ? "★ Pokaż wszystkie" : "★ Tylko ulubione"}
             </button>
+          </div>
+        </div>
+
+        <div>
+          <p className="text-center pb-3 text-2xl font-medium">
+            Sortowanie
+          </p>
+          <div className="flex flex-col items-center gap-2 pb-6">
+            {["Brak","Cena rosnąco", "Cena malejąco", "Nazwa rosnąco", "Nazwa malejąco"].map((sorted) => (
+              <button
+                key={sorted}
+                onClick={() => setSortBy(sorted)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  sortBy === sorted
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"
+                }`}
+              >
+                {sorted}
+              </button>
+            ))}
           </div>
         </div>
 

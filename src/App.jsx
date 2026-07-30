@@ -64,6 +64,11 @@ function App() {
     }
   };
 
+  const clearFavorite = () => {
+    localStorage.removeItem("cryptoFavorites");
+    setFavoritesCrypto([]);
+  }
+
   const sortedCrypto = [...cryptoList].sort((a,b) =>{
     if(sortBy === "Cena rosnąco") return a.current_price - b.current_price
     if(sortBy === "Cena malejąco") return b.current_price - a.current_price
@@ -135,7 +140,7 @@ function App() {
         </div>
 
         <div>
-          <div className="flex justify-center pb-6">
+          <div className="flex justify-center pb-3">
             <button
               onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
               className={`px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${
@@ -145,6 +150,17 @@ function App() {
               }`}
             >
               {showFavoritesOnly ? "★ Pokaż wszystkie" : "★ Tylko ulubione"}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex justify-center pb-3">
+            <button
+              onClick={clearFavorite}
+              className="px-5 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer transition-colors"
+            >
+              Wyczyść ulubione
             </button>
           </div>
         </div>

@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useEffect } from "react";
 import CryptoCard from "./components/CryptoCard";
 import SideBar from "./components/Sidebar";
+import CryptoChart from "./components/CryptoChart";
 
 function App() {
   const [cryptoList, setCryptoList] = useState([]);
+  const [chartData, setChartData] = useState([]);
   const [error, setError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [timeFilter, setTimeFilter] = useState("24h");
@@ -12,6 +14,7 @@ function App() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [itemLimit, setItemLimit] = useState(5);
   const [sortBy, setSortBy] = useState("Brak");
+  const [selectedCrypto, setSelectedCrypto] = useState(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -25,9 +28,10 @@ function App() {
     }
   });
 
+
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_COINGECKO_API_KEY;
     const fetchData = () => {
+      const apiKey = import.meta.env.VITE_COINGECKO_API_KEY;
       fetch(
         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=50&page=1&price_change_percentage=7d,30d,1y&x_cg_demo_api_key=${apiKey}`,
       )
@@ -56,6 +60,28 @@ function App() {
       console.warn("Nie udało się zapisać do localStorage:", error);
     }
   }, [favoritesCrypto]);
+
+
+  useEffect(()=>{
+    if(!selectedCrypto) return;
+
+    const apiKey = import.meta.env.VITE_COINGECKO_API_KEY;
+
+    let days = "1";
+    if (timeFilter === "7 dni") days = "7";
+    if (timeFilter === "30 dni") days = "30";
+    if (timeFilter === "1 rok") days = "365";
+
+    fetch(`https://api.coingecko.com/api/v3/coins/${selectedCrypto.id}/market_chart?vs_currency=${currency}&days=${days}&x_cg_demo_api_key=${apiKey}`)
+    .then((res) => {
+      if(!res.ok) throw new Error("Błąd pobierania wykresu");
+      return res.json()
+    })
+    .then((data) => setChartData(data.prices))
+    .catch((err) => console.log("Nie udało się pobrać danych:", err));
+  }, [selectedCrypto, currency, timeFilter])
+
+
 
   const toggleFavorite = (id) => {
     if (favoritesCrypto.includes(id)) {
@@ -159,11 +185,18 @@ function App() {
                 currency={currency}
                 isFavorite={favoritesCrypto.includes(crypto.id)}
                 onToggleFavorite={() => toggleFavorite(crypto.id)}
+                onSelect={() => setSelectedCrypto(crypto)}
               />
             ))
           )}
         </div>
       )}
+       <CryptoChart
+        chartData={chartData}
+        selectedCrypto={selectedCrypto}
+        currency={currency}
+        timeFilter={timeFilter}
+      />
     </div>
   );
 }

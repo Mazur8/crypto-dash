@@ -19,7 +19,10 @@ function CryptoCard({
   return (
     <div onClick={onSelect} className="bg-white p-6 rounded-xl shadow-md w-48 relative flex flex-col">
       <button
-        onClick={onToggleFavorite}
+        onClick={(e)=> {
+          e.stopPropagation();
+          onToggleFavorite();
+        }}
         className="absolute top-3 right-3 text-2xl hover:scale-110 transition-transform cursor-pointer "
       >
         <span

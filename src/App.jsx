@@ -12,7 +12,7 @@ function App() {
   const [timeFilter, setTimeFilter] = useState("24h");
   const [currency, setCurrency] = useState("usd");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [itemLimit, setItemLimit] = useState(5);
+  const [itemLimit, setItemLimit] = useState(16);
   const [sortBy, setSortBy] = useState("Brak");
   const [selectedCrypto, setSelectedCrypto] = useState(null);
 

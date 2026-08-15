@@ -131,6 +131,28 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 relative">
+      {selectedCrypto && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-4xl relative">
+            <button
+              onClick={() => setSelectedCrypto(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold curosr-pointer"
+            >
+              &times;
+            </button>
+            <CryptoChart
+              chartData={chartData}
+              selectedCrypto={selectedCrypto}
+              currency={currency}
+              timeFilter={timeFilter}
+              setTimeFilter={setTimeFilter}
+              setCurrency={setCurrency}
+            />
+          </div>
+        </div>
+      )}
+
+
       <div className="max-w-4xl mx-auto flex justify-center items-center mb-10">
         <h1 className="text-4xl font-bold">CryptoDash</h1>
 
@@ -191,12 +213,6 @@ function App() {
           )}
         </div>
       )}
-       <CryptoChart
-        chartData={chartData}
-        selectedCrypto={selectedCrypto}
-        currency={currency}
-        timeFilter={timeFilter}
-      />
     </div>
   );
 }

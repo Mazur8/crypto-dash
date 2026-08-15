@@ -1,6 +1,6 @@
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 
-function CryptoChart({chartData, selectedCrypto, currency, timeFilter}){
+function CryptoChart({chartData, selectedCrypto, currency, setCurrency, timeFilter, setTimeFilter}){
 
     const formattedData = chartData.map(([timestamp, price]) => {
         const date = new Date(timestamp)
@@ -23,7 +23,43 @@ function CryptoChart({chartData, selectedCrypto, currency, timeFilter}){
             <h3 className="text-xl font-bold mb-4 text-gray-800">
                 Wykres ceny: <span className="text-indigo-600">{selectedCrypto.name}</span> ({currency.toUpperCase()})
             </h3>
+
+            <p className="text-4xl font-bold text-center pb-6">Filtry</p>
             
+            <p className="text-xl font-bold text-center pb-2">Okres czasu</p>
+            <div className="flex justify-center gap-2 p-2">
+                {["24h", "7 dni", "30 dni", "1 rok"].map((filter)=>(
+                    <button
+                        key={filter}
+                        onClick={() => setTimeFilter(filter)}
+                        className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                            timeFilter === filter
+                            ? "bg-indigo-600 text-white shadow-sm"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                    >
+                        {filter}
+                    </button>
+                ))}
+            </div>
+
+            <p className="text-xl font-bold text-center pb-2">Waluta</p>
+            <div className="flex justify-center gap-2 pb-4">
+                {["usd", "pln", "eur"].map((curr) => (
+                    <button
+                        key={curr}
+                        onClick={()=>setCurrency(curr)}
+                        className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                            currency === curr
+                            ? "bg-indigo-600 text-white shadow-sm"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                    >
+                       {curr} 
+                    </button>
+                ))}
+            </div>
+
             <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={formattedData}>

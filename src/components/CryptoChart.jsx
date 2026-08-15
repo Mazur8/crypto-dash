@@ -19,7 +19,8 @@ function CryptoChart({chartData, selectedCrypto, currency, setCurrency, timeFilt
     if (!selectedCrypto) return null
 
     return(
-        <div className="max-w-4xl mx-auto mt-12 bg-white p-6 rounded-2xl shadow-md">
+        <>
+        <div onClick={(e)=> e.stopPropagation()} className="max-w-4xl mx-auto mt-12 bg-white p-6 rounded-2xl shadow-md">
             <h3 className="text-xl font-bold mb-4 text-gray-800">
                 Wykres ceny: <span className="text-indigo-600">{selectedCrypto.name}</span> ({currency.toUpperCase()})
             </h3>
@@ -87,6 +88,7 @@ function CryptoChart({chartData, selectedCrypto, currency, setCurrency, timeFilt
                 </ResponsiveContainer>
             </div>
         </div>
+        </>
     );
 }
 export default CryptoChart;

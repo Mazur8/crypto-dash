@@ -17,6 +17,7 @@ function App() {
   const [selectedCrypto, setSelectedCrypto] = useState(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChartOpen, setIsChartOpen] = useState(false);
 
   const [favoritesCrypto, setFavoritesCrypto] = useState(() => {
     try {
@@ -131,8 +132,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 relative">
-      {selectedCrypto && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      {selectedCrypto && isChartOpen && (
+        <div onClick={()=>setIsChartOpen(false)} className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-4xl relative">
             <button
               onClick={() => setSelectedCrypto(null)}
@@ -147,6 +148,8 @@ function App() {
               timeFilter={timeFilter}
               setTimeFilter={setTimeFilter}
               setCurrency={setCurrency}
+              isChartOpen={isChartOpen}
+              setIsChartOpen={setIsChartOpen}
             />
           </div>
         </div>
@@ -207,7 +210,10 @@ function App() {
                 currency={currency}
                 isFavorite={favoritesCrypto.includes(crypto.id)}
                 onToggleFavorite={() => toggleFavorite(crypto.id)}
-                onSelect={() => setSelectedCrypto(crypto)}
+                onSelect={() => {
+                  setSelectedCrypto(crypto)
+                  setIsChartOpen(true)
+                }}
               />
             ))
           )}

@@ -6,8 +6,9 @@ Educational cryptocurrency tracking dashboard created to practice React state ma
 
 Application preview:
 
-![Dashboard view](assets/application_screen_1.png)
-![Price chart modal](assets/application_screen_2.png)
+![Dashboard view](assets/app-screen-1.png)
+![Sidebar view](assets/app-screen-2.png)
+![Price chart modal](assets/app-screen-3.png)
 
 ## Main functionalities
 * **Real-time market tracking**: Automatic data polling every 10 seconds for the top 50 cryptocurrencies via CoinGecko API.
